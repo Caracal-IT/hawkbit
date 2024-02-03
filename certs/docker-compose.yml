@@ -1,0 +1,6 @@
+version: '3'
+services:
+  cert-gen:
+    build: .
+    volumes:
+      - ./certs:/app/certs
