@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3661EE51-BC7F-4FA9-BA17-203EA6DFFF10}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apps", "apps", "{9E8FC2D2-420F-4384-87B9-5DC73F9985F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caracal.Device.Manager", "src\apps\Caracal.Device.Manager\Caracal.Device.Manager.csproj", "{8360CB34-6154-4199-B569-C98E127828EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{44B3330C-8409-4EB3-A531-AA02349CD458}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "update-managers", "update-managers", "{6F377BED-5FCC-4105-9014-6ED07FA8E92E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caracal.Device.UpdateManager", "src\libs\update-managers\Caracal.Device.UpdateManager\Caracal.Device.UpdateManager.csproj", "{A7B975C5-0DDD-4A7C-8BF4-9024D9638E74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caracal.Device.UpdateManager.Hawkbit.Rest", "src\libs\update-managers\Caracal.Device.UpdateManager.Hawkbit.Rest\Caracal.Device.UpdateManager.Hawkbit.Rest.csproj", "{BFF25FFE-B908-4819-961F-A0198E0F6D21}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9E8FC2D2-420F-4384-87B9-5DC73F9985F5} = {3661EE51-BC7F-4FA9-BA17-203EA6DFFF10}
+		{8360CB34-6154-4199-B569-C98E127828EB} = {9E8FC2D2-420F-4384-87B9-5DC73F9985F5}
+		{44B3330C-8409-4EB3-A531-AA02349CD458} = {3661EE51-BC7F-4FA9-BA17-203EA6DFFF10}
+		{6F377BED-5FCC-4105-9014-6ED07FA8E92E} = {44B3330C-8409-4EB3-A531-AA02349CD458}
+		{A7B975C5-0DDD-4A7C-8BF4-9024D9638E74} = {6F377BED-5FCC-4105-9014-6ED07FA8E92E}
+		{BFF25FFE-B908-4819-961F-A0198E0F6D21} = {6F377BED-5FCC-4105-9014-6ED07FA8E92E}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8360CB34-6154-4199-B569-C98E127828EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8360CB34-6154-4199-B569-C98E127828EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8360CB34-6154-4199-B569-C98E127828EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8360CB34-6154-4199-B569-C98E127828EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7B975C5-0DDD-4A7C-8BF4-9024D9638E74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7B975C5-0DDD-4A7C-8BF4-9024D9638E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7B975C5-0DDD-4A7C-8BF4-9024D9638E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7B975C5-0DDD-4A7C-8BF4-9024D9638E74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFF25FFE-B908-4819-961F-A0198E0F6D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFF25FFE-B908-4819-961F-A0198E0F6D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFF25FFE-B908-4819-961F-A0198E0F6D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFF25FFE-B908-4819-961F-A0198E0F6D21}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
