@@ -1,4 +1,5 @@
 version: '3'
+name: hawkbit
 
 services:
   hawkbit:
@@ -9,27 +10,28 @@ services:
       - ./certs:/var/hawkbit/certs
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/hawkbit
+      - SPRING_JPA_DATABASE=POSTGRESQL
       - SPRING_DATASOURCE_USERNAME=hawkbit
       - SPRING_DATASOURCE_PASSWORD=hawkbit
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_USERNAME=hawkbit
-      - SPRING_RABBITMQ_PASSWORD=hawkbit
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
       - SPRING_RABBITMQ_VIRTUAL_HOST=/
       - SPRING_RABBITMQ_LISTENER_DIRECT_CONCURRENCY=5
       - SPRING_RABBITMQ_LISTENER_DIRECT_MAX_CONCURRENCY=10
       - SPRING_RABBITMQ_LISTENER_DIRECT_PREFETCH=5
       - SPRING_RABBITMQ_LISTENER_DIRECT_ACKNOWLEDGE-MODE=MANUAL
       - SPRING_RABBITMQ_LISTENER_DIRECT_MQTT_ENABLED=true
-      - SPRING_RABBITMQ_LISTENER_DIRECT_MQTT_PORT=8883
-      - SPRING_RABBITMQ_LISTENER_DIRECT_MQTT_SSL_ENABLED=true
+      - SPRING_RABBITMQ_LISTENER_DIRECT_MQTT_PORT=1883
+      - SPRING_RABBITMQ_LISTENER_DIRECT_MQTT_SSL_ENABLED=false
       - SPRING_RABBITMQ_LISTENER_DIRECT_MQTT_SSL_KEYSTORE_LOCATION=/var/hawkbit/certs/server.jks
       - SPRING_RABBITMQ_LISTENER_DIRECT_MQTT_SSL_KEYSTORE_PASSWORD=changeit
       - SPRING_RABBITMQ_LISTENER_DIRECT_MQTT_SSL_TRUSTSTORE_LOCATION=/var/hawkbit/certs/server.jks
       - SPRING_RABBITMQ_LISTENER_DIRECT_MQTT_SSL_TRUSTSTORE_PASSWORD=changeit
 
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:management
     ports:
       - 5672:5672
       - 15672:15672
@@ -39,9 +41,13 @@ services:
       - ./rabbitmq-data:/var/lib/rabbitmq
       - ./certs:/etc/rabbitmq/certs
     environment:
-      - RABBITMQ_SSL_CERTFILE=/etc/rabbitmq/certs/server.crt
-      - RABBITMQ_SSL_KEYFILE=/etc/rabbitmq/certs/server.key
-      - RABBITMQ_SSL_CACERTFILE=/etc/rabbitmq/certs/server.crt
+      #- RABBITMQ_DEFAULT_USER=hawkbit 
+      #- RABBITMQ_DEFAULT_PASS=hawkbit
+      - RABBITMQ_USER hawkbit
+      - RABBITMQ_PASSWORD hawkbit
+      #- RABBITMQ_SSL_CERTFILE=/etc/rabbitmq/certs/server.crt
+      #- RABBITMQ_SSL_KEYFILE=/etc/rabbitmq/certs/server.key
+      #- RABBITMQ_SSL_CACERTFILE=/etc/rabbitmq/certs/server.crt
 
   postgres:
     image: postgres:latest
