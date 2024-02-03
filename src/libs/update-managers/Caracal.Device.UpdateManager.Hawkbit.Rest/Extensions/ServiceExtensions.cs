@@ -1,11 +1,12 @@
-﻿using Caracal.Device.UpdateManager.Hawkbit.Rest.Services;
+﻿using Caracal.Device.UpdateManager.Hawkbit.Rest.Repositories;
+using Caracal.Device.UpdateManager.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Caracal.Device.UpdateManager.Hawkbit.Rest.Extensions;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddHawkbitClient(this IServiceCollection services)
+    public static IServiceCollection AddHawkbitRest(this IServiceCollection services)
     {
         /*
         services.AddHttpClient<IHawkbitClient, HawkbitHttpClient>(client =>
@@ -15,7 +16,7 @@ public static class ServiceExtensions
         });
         */
 
-        services.AddHostedService<SoftwareUpdateService>();
+        services.AddSingleton<ISoftwareUpdateServerRepository, SoftwareUpdateServerRepository>();
         
         return services;
     }
