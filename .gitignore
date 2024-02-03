@@ -7,6 +7,8 @@
 build/certs/certs/
 build/docker/certs/
 
+# Exclude Mac files
+.DS_Store
 
 # User-specific files
 *.rsuser
