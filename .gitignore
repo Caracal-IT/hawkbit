@@ -6,6 +6,8 @@
 # runtime folders
 build/certs/certs/
 build/docker/certs/
+build/docker/postgres-data/
+build/docker/rabbitmq-data/
 
 # Exclude Mac files
 .DS_Store
