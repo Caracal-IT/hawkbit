@@ -1,6 +1,8 @@
-﻿namespace Caracal.Device.UpdateManager.Repositories;
+﻿using Caracal.Device.UpdateManager.Models.UpdateRequest;
+
+namespace Caracal.Device.UpdateManager.Repositories;
 
 public interface ISoftwareUpdateServerRepository
 {
-    Task<string> GetSoftwareUpdateServerUrlAsync(CancellationToken cancellationToken = default);
+    IAsyncEnumerable<ISoftwareUpdateRequest> GetSoftwareUpdateRequestsAsync(string tenantId, string deviceId, CancellationToken cancellationToken = default);
 }

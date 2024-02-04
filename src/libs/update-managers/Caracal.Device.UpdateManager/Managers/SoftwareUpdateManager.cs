@@ -5,11 +5,12 @@ namespace Caracal.Device.UpdateManager.Managers;
 
 public sealed class SoftwareUpdateManager(ILogger<SoftwareUpdateManager> logger, ISoftwareUpdateServerRepository repository)
 {
-    public Task CheckForUpdatesAsync(CancellationToken cancellationToken = default)
+    public async Task CheckForUpdatesAsync(CancellationToken cancellationToken = default)
     {
-        if(logger.IsEnabled(LogLevel.Information))
-            logger.LogInformation("Checking for updates {UpdateServerUrl}", repository.GetSoftwareUpdateServerUrlAsync(cancellationToken).Result);
-        
-        return Task.CompletedTask;
+        await foreach (var request in repository.GetSoftwareUpdateRequestsAsync("", "", cancellationToken))
+        {
+            if(logger.IsEnabled(LogLevel.Information))
+                logger.LogInformation("Checking for updates {RequestId}", request.Id);     
+        }
     }
 }
