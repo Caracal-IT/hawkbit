@@ -1,7 +1,8 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Caracal.Device.UpdateManager.Hawkbit.Rest.Constants;
-using Caracal.Device.UpdateManager.Hawkbit.Rest.RestModels.UpdateRequestsModels;
 using Caracal.Device.UpdateManager.Repositories;
 using Mapster;
 
@@ -40,10 +41,40 @@ public sealed class SoftwareUpdateServerRepository(IHttpClientFactory httpClient
         }
     }
 
-    public async Task<byte[]> DownloadArtifactAsync(Models.UpdateRequestsModels.Artifact artifact, CancellationToken cancellationToken = default)
-    {
-        var response = await _client.GetAsync(artifact.Links.Download.Href, cancellationToken);
+    public async Task<byte[]> DownloadArtifactAsync(Models.UpdateRequestsModels.Artifact artifact, CancellationToken cancellationToken = default) =>
+        await _client.GetByteArrayAsync(artifact.Links.Download.Href, cancellationToken);
 
-        return new byte[0];
+    public async Task<bool> UpdateStatusAsync(string tenantId, string deviceId, int deploymentId, CancellationToken cancellationToken = default)
+    {
+        var timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.ffff");
+        var url = $"/{tenantId}/controller/v1/{deviceId}/deploymentBase/{deploymentId}/feedback";
+        
+        var request = $$"""
+                        {
+                          "id": "{{deploymentId}}",
+                          "time": "{{timestamp}}",
+                          "status": {
+                            "execution0": "downloaded",
+                            "execution": "closed",
+                            "result": {
+                              "finished": "success",
+                              "progress": {
+                                "cnt": 1,
+                                "of": 5
+                              }
+                            },
+                            "code": 200,
+                            "details": [
+                              "string"
+                            ]
+                          }
+                        }
+                        """;
+
+        var content = new StringContent(request, Encoding.UTF8, "application/json");
+        
+        var response = await _client.PostAsync(url, content, cancellationToken).ConfigureAwait(false);
+
+        return response.StatusCode == HttpStatusCode.OK;
     }
 }
