@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Caracal.Device.UpdateManager.Hawkbit.Rest.RestModels.UpdateRequestsModels;
 
-public class Hashes
+public sealed class Hashes
 {
     [JsonPropertyName("sha1")]
     public required string Sha1 { get; set; }

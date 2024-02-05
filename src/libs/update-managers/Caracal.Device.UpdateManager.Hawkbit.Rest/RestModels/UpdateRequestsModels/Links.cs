@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Caracal.Device.UpdateManager.Hawkbit.Rest.RestModels.UpdateRequestsModels;
 
-public class Links
+public sealed class Links
 {
     [JsonPropertyName("download-http")]
     public required Link Download { get; set; }

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Caracal.Device.UpdateManager.Hawkbit.Rest.RestModels.ControllerModels;
 
-public class Config
+public sealed class Config
 {
     [JsonPropertyName("polling")]
     public required Polling Polling { get; set; }

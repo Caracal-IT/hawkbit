@@ -13,7 +13,7 @@ public sealed class SoftwareUpdateService(ILogger<SoftwareUpdateService> logger,
             if (logger.IsEnabled(LogLevel.Information))
                 logger.LogInformation("Software Update Service is running");
             
-            await softwareUpdateManager.CheckForUpdatesAsync(stoppingToken).ConfigureAwait(false);
+            await softwareUpdateManager.CheckForUpdatesAsync("default", "gate1", stoppingToken).ConfigureAwait(false);
 
             await Task.Delay(3000, stoppingToken).ConfigureAwait(false);
         }

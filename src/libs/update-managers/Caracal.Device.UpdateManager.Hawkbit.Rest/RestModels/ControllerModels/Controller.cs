@@ -2,7 +2,7 @@
 
 namespace Caracal.Device.UpdateManager.Hawkbit.Rest.RestModels.ControllerModels;
 
-public class Controller
+public sealed class Controller
 {
     [JsonPropertyName("config")]
     public required Config Config { get; set; }

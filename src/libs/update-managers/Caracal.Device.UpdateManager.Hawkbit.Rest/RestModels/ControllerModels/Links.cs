@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Caracal.Device.UpdateManager.Hawkbit.Rest.RestModels.ControllerModels;
 
-public class Links
+public sealed class Links
 {
     [JsonPropertyName("deploymentBase")]
     public Link? DeploymentBase { get; set; }

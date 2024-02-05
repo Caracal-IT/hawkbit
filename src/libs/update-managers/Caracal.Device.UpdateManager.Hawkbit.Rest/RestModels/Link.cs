@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿// ReSharper disable ClassNeverInstantiated.Global
+
+using System.Text.Json.Serialization;
 
 namespace Caracal.Device.UpdateManager.Hawkbit.Rest.RestModels;
 
