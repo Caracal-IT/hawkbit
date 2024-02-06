@@ -8,7 +8,7 @@ public class MqttClient
 {
     private IManagedMqttClient _mqttClient = new MqttFactory().CreateManagedMqttClient();
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
         var options = new MqttClientOptionsBuilder()
             .WithTcpServer("localhost", 1883)
@@ -16,11 +16,12 @@ public class MqttClient
 
         var managedOptions = new ManagedMqttClientOptionsBuilder()
             .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-            .WithClientOptions(options);
+            .WithClientOptions(options)
+            .Build();
         
         _mqttClient.ApplicationMessageReceivedAsync += MqttClientOnApplicationMessageReceivedAsync;
-        
-        return Task.CompletedTask;
+
+        await _mqttClient.StartAsync(managedOptions);
     }
 
     private Task MqttClientOnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
