@@ -8,9 +8,11 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddSoftwareUpdates(this IServiceCollection services)
     {
-        services.AddSingleton<SoftwareUpdateManager>();
+        //services.AddSingleton<SoftwareUpdateManager>();
 
-        services.AddHostedService<SoftwareUpdateService>();
+        //services.AddHostedService<SoftwareUpdateService>();
+
+        services.AddHostedService<UpdateService>();
         
         return services;
     }
