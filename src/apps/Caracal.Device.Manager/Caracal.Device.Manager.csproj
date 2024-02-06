@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\libs\update-managers\Caracal.Device.UpdateManager.Hawkbit.RabbitMQ\Caracal.Device.UpdateManager.Hawkbit.RabbitMQ.csproj" />
       <ProjectReference Include="..\..\libs\update-managers\Caracal.Device.UpdateManager.Hawkbit.Rest\Caracal.Device.UpdateManager.Hawkbit.Rest.csproj" />
       <ProjectReference Include="..\..\libs\update-managers\Caracal.Device.UpdateManager\Caracal.Device.UpdateManager.csproj" />
     </ItemGroup>

@@ -1,4 +1,6 @@
-﻿WriteLine("CARACAL - Device Manager");
+﻿using Caracal.Device.UpdateManager.Hawkbit.RabbitMQ.Extensions;
+
+WriteLine("CARACAL - Device Manager");
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -13,6 +15,8 @@ builder.Services
        .AddSoftwareUpdates()
        .AddHawkbitRest();
 
+
+//builder.Services.AddHawkbitRabbitMQ();
 
 var host = builder.Build();
 await host.RunAsync();
