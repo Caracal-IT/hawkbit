@@ -10,6 +10,7 @@ namespace Caracal.Messaging.Mqtt.Client;
 
 internal sealed class MqttClient: IMqttClient, IDisposable
 {
+    private const int OneHour = 3_600;
     private readonly IManagedMqttClient _mqttClient = new MqttFactory().CreateManagedMqttClient();
     private readonly ConcurrentDictionary<Guid, ISubscription> _subscriptions = [];
 
@@ -24,7 +25,7 @@ internal sealed class MqttClient: IMqttClient, IDisposable
             .WithWillTopic("caracal/status")
             .WithWillPayload("disconnected")
             .WithWillRetain()
-            .WithWillMessageExpiryInterval(60)
+            .WithWillMessageExpiryInterval(OneHour)
             .WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
             .WithProtocolVersion(MqttProtocolVersion.V500)
             .Build();
@@ -54,7 +55,7 @@ internal sealed class MqttClient: IMqttClient, IDisposable
             .WithPayload(payload)
             .WithRetainFlag()
             .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
-            .WithMessageExpiryInterval(60)
+            .WithMessageExpiryInterval(OneHour)
             .Build();
 
         await _mqttClient.EnqueueAsync(msg);
