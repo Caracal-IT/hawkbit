@@ -1,4 +1,4 @@
-﻿namespace Caracal.Messaging.Mqtt;
+﻿namespace Caracal.Messaging.Mqtt.Command;
 
 internal sealed class MqttCommandAction
 {
@@ -10,12 +10,15 @@ internal sealed class MqttCommandAction
 
     private readonly string _topic;
     private readonly string _message;
+    private readonly string _responseTopic;
     private string? _response;
 
-    public MqttCommandAction(string topic, string message, CancellationToken cancellationToken)
+    public MqttCommandAction(string topic, string message, string responseTopic, CancellationToken cancellationToken)
     {
         _topic = topic;
         _message = message;
+        _responseTopic = responseTopic;
+        
         _queueResponse = () => Task.Run(OnResponseReceivedAsync, _cancellationToken).ConfigureAwait(false);
         
         _cancellationTokenSource = new CancellationTokenSource(_timeoutTimeSpan);

@@ -1,4 +1,5 @@
-using Caracal.SoftwareUpdate.Application;
+using Caracal.Messaging.Mqtt.Client;
+using Caracal.Messaging.Mqtt.Extensions;
 using Caracal.SoftwareUpdate.Application.Extensions;
 
 WriteLine("CARACAL - Device Manager");
@@ -12,9 +13,15 @@ builder.Services.AddHttpClient(HttpClients.HawkHttpClient, x =>
 });
 
 builder.Services
+       .AddMqttClient()
        .AddSoftwareProcessor()
        .AddSoftwareUpdates()
        .AddHawkbitRest();
 
 var host = builder.Build();
+
+var mqtt = host.Services.GetRequiredService<IMqttClient>();
+
+await mqtt.StartAsync();
 await host.RunAsync();
+await mqtt.StopAsync();

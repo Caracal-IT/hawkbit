@@ -1,4 +1,4 @@
-﻿namespace Caracal.Messaging.Mqtt;
+﻿namespace Caracal.Messaging.Mqtt.Command;
 
 public interface IMqttCommandFactory
 {

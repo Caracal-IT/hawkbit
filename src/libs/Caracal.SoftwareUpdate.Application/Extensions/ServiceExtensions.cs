@@ -1,5 +1,6 @@
 ﻿using Caracal.Messaging.Mqtt;
-using Caracal.SoftwareUpdate.Application.Factories;
+using Caracal.Messaging.Mqtt.Client;
+using Caracal.Messaging.Mqtt.Command;
 using Caracal.SoftwareUpdate.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,8 +10,7 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddSoftwareProcessor(this IServiceCollection services)
     {
-        services.AddSingleton<IMqttCommandFactory>(new MqttCommandFactory("Test Broker"));
-        
+        services.AddHostedService<ResponseRobot>();
         services.AddHostedService<ProcessUpdateService>();
         
         return services;

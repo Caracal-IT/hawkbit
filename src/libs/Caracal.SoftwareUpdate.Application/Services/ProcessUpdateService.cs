@@ -1,15 +1,19 @@
 ﻿using System.Text.Json;
 using Caracal.Messaging.Mqtt;
+using Caracal.Messaging.Mqtt.Client;
+using Caracal.Messaging.Mqtt.Command;
 using Caracal.SoftwareUpdate.Application.Data;
 using Caracal.SoftwareUpdate.Application.Processors;
 using Microsoft.Extensions.Hosting;
 
 namespace Caracal.SoftwareUpdate.Application.Services;
 
-public sealed class ProcessUpdateService(IMqttCommandFactory mqttCommandFactory) : BackgroundService
+public sealed class ProcessUpdateService(IMqttCommandFactory mqttCommandFactory, IMqttClient mqttClient) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await mqttClient.EnqueueAsync("caracal/services/software-update", "started");
+        
         var useCommand = false;
         await Task.Delay(1_000, stoppingToken);
         
@@ -35,6 +39,9 @@ public sealed class ProcessUpdateService(IMqttCommandFactory mqttCommandFactory)
             await Task.Delay(10_000, stoppingToken);
         }
     }
+    
+    public override async Task StopAsync(CancellationToken cancellationToken) => 
+        await mqttClient.EnqueueAsync("caracal/services/software-update", "stopped");
 
     private static async Task<UpdateRequest> CreateDemoUpdateRequestAsync(CancellationToken cancellationToken)
     {

@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-            <_Parameter1>Caracal.SoftwareUpdate.Application</_Parameter1>
-        </AssemblyAttribute>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+      <PackageReference Include="MQTTnet" Version="4.3.3.952" />
+      <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.3.3.952" />
     </ItemGroup>
 </Project>

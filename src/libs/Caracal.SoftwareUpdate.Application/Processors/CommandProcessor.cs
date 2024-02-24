@@ -1,4 +1,4 @@
-﻿using Caracal.Messaging.Mqtt;
+﻿using Caracal.Messaging.Mqtt.Command;
 using Caracal.SoftwareUpdate.Application.Data;
 
 namespace Caracal.SoftwareUpdate.Application.Processors;
@@ -42,7 +42,13 @@ public sealed class CommandProcessor: IDisposable
         var msg = $"Requesting {chunk.Name} - {artifact.Name}";
         var cmd = _cmdFactory.Create();
         Console.WriteLine($"Begin - ${msg}");
-        var result = await cmd.ExecuteAsync("my-topic", msg, _cancellationToken).ConfigureAwait(false);
+        
+        var result = await cmd.ExecuteAsync(
+            "caracal/actions/software-update/req", 
+            msg, 
+            "caracal/actions/software-update/resp", 
+            _cancellationToken).ConfigureAwait(false);
+        
         Console.WriteLine($"End - {msg} --> {result}");
     }
 
