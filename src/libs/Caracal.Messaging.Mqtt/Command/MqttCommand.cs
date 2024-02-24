@@ -6,7 +6,7 @@ internal sealed class MqttCommand(IMqttClient mqttClient) : IMqttCommand
 {
     public async Task<string> ExecuteAsync(string topic, string message, string responseTopic, CancellationToken cancellationToken)
     {
-        return await new MqttCommandAction(topic, message,  responseTopic, cancellationToken)
+        return await new MqttCommandAction(mqttClient, topic, message,  responseTopic, cancellationToken)
             .ExecuteAsync()
             .ConfigureAwait(false);
     }

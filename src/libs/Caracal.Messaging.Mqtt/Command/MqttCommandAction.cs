@@ -1,51 +1,55 @@
-﻿namespace Caracal.Messaging.Mqtt.Command;
+﻿using System.Text;
+using Caracal.Messaging.Mqtt.Client;
+using MQTTnet.Client;
+using IMqttClient = Caracal.Messaging.Mqtt.Client.IMqttClient;
+
+namespace Caracal.Messaging.Mqtt.Command;
 
 internal sealed class MqttCommandAction
 {
-    private readonly Action _queueResponse;
-    
     private readonly CancellationToken _cancellationToken;
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly TimeSpan _timeoutTimeSpan = TimeSpan.FromMinutes(3);
 
+    private readonly IMqttClient _mqttClient;
+    private ISubscription? _subscription;
+    
     private readonly string _topic;
     private readonly string _message;
     private readonly string _responseTopic;
     private string? _response;
 
-    public MqttCommandAction(string topic, string message, string responseTopic, CancellationToken cancellationToken)
+    public MqttCommandAction(IMqttClient mqttClient, string topic, string message, string responseTopic, CancellationToken cancellationToken)
     {
         _topic = topic;
         _message = message;
         _responseTopic = responseTopic;
-        
-        _queueResponse = () => Task.Run(OnResponseReceivedAsync, _cancellationToken).ConfigureAwait(false);
+        _mqttClient = mqttClient;
         
         _cancellationTokenSource = new CancellationTokenSource(_timeoutTimeSpan);
         _cancellationToken = CancellationTokenSource.CreateLinkedTokenSource([_cancellationTokenSource.Token, cancellationToken]).Token;
     }
 
-    public Task<string> ExecuteAsync()
+    public async Task<string> ExecuteAsync()
     {
-        Console.WriteLine($"Executing {_message} on {_topic}");
-        _queueResponse();
-        Console.WriteLine($"Done Executing {_message}");
+        _subscription = await _mqttClient.SubscribeAsync(_responseTopic).ConfigureAwait(false);
+        _subscription.MqttApplicationMessageReceivedEventArgs += SubscriptionOnMqttApplicationMessageReceivedEventArgs;
 
+        await _mqttClient.EnqueueAsync(_topic, _message).ConfigureAwait(false);
+        
         _cancellationToken.WaitHandle.WaitOne(_timeoutTimeSpan);
 
         if (_response is null)
             throw new TimeoutException();
         
-        return Task.FromResult(_response);
+        return _response;
     }
 
-    private async Task OnResponseReceivedAsync()
+    private async Task SubscriptionOnMqttApplicationMessageReceivedEventArgs(MqttApplicationMessageReceivedEventArgs arg)
     {
-        await Task.Delay(Random.Shared.Next(500, 1_000) , _cancellationToken).ConfigureAwait(false);
-        Console.WriteLine($"Message Received {_message}");
-
-        _response = $"Response {_message}";
-
+        _response = Encoding.UTF8.GetString(arg.ApplicationMessage.PayloadSegment);
+        
+        await _subscription!.UnsubscribeAsync().ConfigureAwait(false);
         await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
     }
 }

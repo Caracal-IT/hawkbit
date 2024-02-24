@@ -56,8 +56,9 @@ internal sealed class MqttClient: IMqttClient, IDisposable
     {
         var subscription = new Subscription( topic, this);
         _subscriptions.TryAdd(subscription.Id, subscription);
-     
+        
         await _mqttClient.SubscribeAsync(topic);
+        await Task.Delay(10);
         
         return subscription;
     }

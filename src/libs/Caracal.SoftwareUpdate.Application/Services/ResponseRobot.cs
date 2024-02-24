@@ -1,4 +1,5 @@
-﻿using Caracal.Messaging.Mqtt.Client;
+﻿using System.Text;
+using Caracal.Messaging.Mqtt.Client;
 using Microsoft.Extensions.Hosting;
 using MQTTnet.Client;
 using IMqttClient = Caracal.Messaging.Mqtt.Client.IMqttClient;
@@ -13,13 +14,15 @@ public sealed class ResponseRobot(IMqttClient mqttClient): BackgroundService
     {
         await mqttClient.EnqueueAsync("caracal/services/response-robot", "started");
         
-        _subscription = await mqttClient.SubscribeAsync("test1");
+        _subscription = await mqttClient.SubscribeAsync("caracal/actions/software-update/req");
         _subscription.MqttApplicationMessageReceivedEventArgs += SubscriptionOnMqttApplicationMessageReceivedEventArgs;
     }
 
-    private Task SubscriptionOnMqttApplicationMessageReceivedEventArgs(MqttApplicationMessageReceivedEventArgs arg)
+    private async Task SubscriptionOnMqttApplicationMessageReceivedEventArgs(MqttApplicationMessageReceivedEventArgs arg)
     {
-        return Task.CompletedTask;
+        await Task.Delay(Random.Shared.Next(0, 2000));
+        var payload = Encoding.UTF8.GetString(arg.ApplicationMessage.PayloadSegment);
+        await mqttClient.EnqueueAsync("caracal/actions/software-update/resp", $"Response -> {payload}");
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken) => 
