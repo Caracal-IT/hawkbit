@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Caracal.Device.Manager.Example;
 using Caracal.Messaging.Mqtt;
 using Microsoft.Extensions.Hosting;
 

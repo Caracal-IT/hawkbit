@@ -15,7 +15,7 @@ public sealed class SoftwareUpdateService(ILogger<SoftwareUpdateService> logger,
             
             await softwareUpdateManager.CheckForUpdatesAsync("default", "gate1", stoppingToken).ConfigureAwait(false);
 
-            await Task.Delay(3000, stoppingToken).ConfigureAwait(false);
+            await Task.Delay(120_000, stoppingToken).ConfigureAwait(false);
         }
     }
 }

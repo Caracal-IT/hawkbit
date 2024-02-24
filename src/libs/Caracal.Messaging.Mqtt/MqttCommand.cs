@@ -1,6 +1,6 @@
 ﻿namespace Caracal.Messaging.Mqtt;
 
-internal class MqttCommand(string mqttBroker) : IMqttCommand
+internal sealed class MqttCommand(string mqttBroker) : IMqttCommand
 {
     public async Task<string> ExecuteAsync(string topic, string message, CancellationToken cancellationToken)
     {

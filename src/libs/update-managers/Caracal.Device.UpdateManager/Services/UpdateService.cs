@@ -9,7 +9,7 @@ public sealed class UpdateService: BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             Console.WriteLine("Running UpdateService");
-            await Task.Delay(3000, stoppingToken);
+            await Task.Delay(120_000, stoppingToken);
         }
     }
 }

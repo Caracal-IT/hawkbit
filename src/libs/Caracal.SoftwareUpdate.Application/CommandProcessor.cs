@@ -2,7 +2,7 @@
 
 namespace Caracal.SoftwareUpdate.Application;
 
-public class CommandProcessor: IDisposable
+public sealed class CommandProcessor: IDisposable
 {
     private readonly UpdateRequest _updateRequest;
     private readonly CancellationToken _cancellationToken;
@@ -45,9 +45,5 @@ public class CommandProcessor: IDisposable
         Console.WriteLine($"End - {msg} --> {result}");
     }
 
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        _cancellationTokenSource.Dispose();
-    }
+    public void Dispose() => _cancellationTokenSource.Dispose();
 }
