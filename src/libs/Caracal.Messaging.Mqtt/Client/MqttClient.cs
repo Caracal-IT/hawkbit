@@ -4,6 +4,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Formatter;
+using MQTTnet.Protocol;
 
 namespace Caracal.Messaging.Mqtt.Client;
 
@@ -22,7 +23,9 @@ internal sealed class MqttClient: IMqttClient, IDisposable
             .WithClientId("Client1")
             .WithWillTopic("caracal/status")
             .WithWillPayload("disconnected")
-            .WithWillRetain(false)
+            .WithWillRetain()
+            .WithWillMessageExpiryInterval(60)
+            .WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
             .WithProtocolVersion(MqttProtocolVersion.V500)
             .Build();
         
@@ -49,7 +52,9 @@ internal sealed class MqttClient: IMqttClient, IDisposable
         var msg = new MqttApplicationMessageBuilder()
             .WithTopic(topic)
             .WithPayload(payload)
-            //.WithExactlyOnceQoS()
+            .WithRetainFlag()
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+            .WithMessageExpiryInterval(60)
             .Build();
 
         await _mqttClient.EnqueueAsync(msg);
