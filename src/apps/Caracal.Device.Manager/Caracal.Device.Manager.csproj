@@ -29,6 +29,7 @@
 
     <ItemGroup>
       <Folder Include="CommandExample\" />
+      <Folder Include="Example\" />
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,6 @@
-﻿namespace Caracal.Device.Manager.Example;
+﻿using Caracal.SoftwareUpdate.Application;
+
+namespace Caracal.Device.Manager.Example;
 
 public sealed class Processor: IDisposable
 {

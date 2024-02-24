@@ -1,0 +1,20 @@
+﻿{
+  "id": "8a5eabce-7c80-44ac-b845-d809f925d45f",
+  "name": "Request 1",
+  "chunks": [
+    {
+      "name": "Chunk 1",
+      "artifacts": [
+        { "name": "Artifact 1" },
+        { "name": "Artifact 2" }
+      ]
+    },
+    {
+      "name": "Chunk 2",
+      "artifacts": [
+        { "name": "Artifact 3" },
+        { "name": "Artifact 4" }
+      ]
+    }
+  ]
+}
