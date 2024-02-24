@@ -22,7 +22,7 @@ internal sealed class MqttClient: IMqttClient, IDisposable
             .WithClientId("Client1")
             .WithWillTopic("caracal/status")
             .WithWillPayload("disconnected")
-            .WithWillRetain()
+            .WithWillRetain(false)
             .WithProtocolVersion(MqttProtocolVersion.V500)
             .Build();
         
