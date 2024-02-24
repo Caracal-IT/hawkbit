@@ -96,7 +96,7 @@ internal sealed class MqttClient: IMqttClient, IDisposable
         static bool ValidateTopic(string template, string topic)
         {
             // Escape special characters and replace wildcards with regex equivalents
-            var regexPattern = "^" + Regex.Escape(template).Replace("\\+", "[^/]+").Replace("\\#", ".+") + "$";
+            var regexPattern = $"^{Regex.Escape(template).Replace("\\+", "[^/]+").Replace("\\#", ".+")}$";
             return Regex.IsMatch(topic, regexPattern);
         }
     }
