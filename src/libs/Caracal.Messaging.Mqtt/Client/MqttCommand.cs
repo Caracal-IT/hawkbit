@@ -1,11 +1,9 @@
 ﻿using System.Text;
-using Caracal.Messaging.Mqtt.Client;
 using MQTTnet.Client;
-using IMqttClient = Caracal.Messaging.Mqtt.Client.IMqttClient;
 
-namespace Caracal.Messaging.Mqtt.Command;
+namespace Caracal.Messaging.Mqtt.Client;
 
-internal sealed class MqttCommandAction
+internal sealed class MqttCommand
 {
     private readonly CancellationToken _cancellationToken;
     private readonly CancellationTokenSource _cancellationTokenSource;
@@ -19,7 +17,7 @@ internal sealed class MqttCommandAction
     private readonly string _responseTopic;
     private string? _response;
 
-    public MqttCommandAction(IMqttClient mqttClient, string topic, string message, string responseTopic, CancellationToken cancellationToken)
+    public MqttCommand(IMqttClient mqttClient, string topic, string message, string responseTopic, CancellationToken cancellationToken)
     {
         _topic = topic;
         _message = message;

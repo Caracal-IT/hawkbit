@@ -1,14 +1,13 @@
 ﻿using System.Text.Json;
 using Caracal.Messaging.Mqtt;
 using Caracal.Messaging.Mqtt.Client;
-using Caracal.Messaging.Mqtt.Command;
 using Caracal.SoftwareUpdate.Application.Data;
 using Caracal.SoftwareUpdate.Application.Processors;
 using Microsoft.Extensions.Hosting;
 
 namespace Caracal.SoftwareUpdate.Application.Services;
 
-public sealed class ProcessUpdateService(IMqttCommandFactory mqttCommandFactory, IMqttClient mqttClient) : BackgroundService
+public sealed class ProcessUpdateService(IMqttClient mqttClient) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -31,7 +30,7 @@ public sealed class ProcessUpdateService(IMqttCommandFactory mqttCommandFactory,
             Console.WriteLine($"Start {(useCommand?"With Command":string.Empty)} ...");
             await Task.Delay(1_000, stoppingToken);
             
-            if(useCommand) await CommandProcessor.ProcessAsync(mqttCommandFactory, newReq, stoppingToken);
+            if(useCommand) await CommandProcessor.ProcessAsync(mqttClient, newReq, stoppingToken);
             else await Processor.ProcessAsync(newReq, stoppingToken);
             
             Console.WriteLine("Done ....");

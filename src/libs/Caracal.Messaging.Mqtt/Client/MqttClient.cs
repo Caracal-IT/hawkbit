@@ -12,11 +12,8 @@ internal sealed class MqttClient: IMqttClient, IDisposable
     private readonly IManagedMqttClient _mqttClient = new MqttFactory().CreateManagedMqttClient();
     private readonly ConcurrentDictionary<Guid, ISubscription> _subscriptions = [];
 
-    public MqttClient()
-    {
+    public MqttClient() => 
         _mqttClient.ApplicationMessageReceivedAsync += MqttClientOnApplicationMessageReceivedAsync;
-        _mqttClient.ConnectingFailedAsync += args => { Console.WriteLine("Failed to Connect"); return Task.CompletedTask; };
-    }
 
     public async Task StartAsync()
     {
@@ -35,7 +32,6 @@ internal sealed class MqttClient: IMqttClient, IDisposable
             .Build();
         
         await _mqttClient.StartAsync(managedOptions);
-
         await _mqttClient.EnqueueAsync("caracal/status", "connected");
     }
 
@@ -69,6 +65,11 @@ internal sealed class MqttClient: IMqttClient, IDisposable
         
         return subscription;
     }
+
+    public async Task<string> ExecuteAsync(string topic, string message, string responseTopic, CancellationToken cancellationToken) =>
+        await new MqttCommand(this, topic, message,  responseTopic, cancellationToken)
+            .ExecuteAsync()
+            .ConfigureAwait(false);
 
     private async Task MqttClientOnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
     {
