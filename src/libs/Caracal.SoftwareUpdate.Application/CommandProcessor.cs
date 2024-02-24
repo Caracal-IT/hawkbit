@@ -1,4 +1,6 @@
-﻿namespace Caracal.Device.Manager.CommandExample;
+﻿using Caracal.Messaging.Mqtt;
+
+namespace Caracal.SoftwareUpdate.Application;
 
 public class CommandProcessor: IDisposable
 {

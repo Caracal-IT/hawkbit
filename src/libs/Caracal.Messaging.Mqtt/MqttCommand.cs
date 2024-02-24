@@ -1,9 +1,4 @@
-﻿namespace Caracal.Device.Manager.CommandExample;
-
-public interface IMqttCommand
-{
-    Task<string> ExecuteAsync(string topic, string message, CancellationToken cancellationToken);
-}
+﻿namespace Caracal.Messaging.Mqtt;
 
 internal class MqttCommand(string mqttBroker) : IMqttCommand
 {

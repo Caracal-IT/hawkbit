@@ -16,6 +16,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caracal.Device.UpdateManage
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caracal.Device.UpdateManager.Hawkbit.RabbitMQ", "src\libs\update-managers\Caracal.Device.UpdateManager.Hawkbit.RabbitMQ\Caracal.Device.UpdateManager.Hawkbit.RabbitMQ.csproj", "{A03378D4-4C43-4291-BE5F-01B9A15B51DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caracal.Messaging.Mqtt", "src\libs\Caracal.Messaging.Mqtt\Caracal.Messaging.Mqtt.csproj", "{C8F6899F-B077-4622-9C6D-AE12E308C0D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caracal.SoftwareUpdate.Application", "src\libs\Caracal.SoftwareUpdate.Application\Caracal.SoftwareUpdate.Application.csproj", "{29C32360-4B6D-4072-B6A7-A2D71BFB9486}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +33,8 @@ Global
 		{A7B975C5-0DDD-4A7C-8BF4-9024D9638E74} = {6F377BED-5FCC-4105-9014-6ED07FA8E92E}
 		{BFF25FFE-B908-4819-961F-A0198E0F6D21} = {6F377BED-5FCC-4105-9014-6ED07FA8E92E}
 		{A03378D4-4C43-4291-BE5F-01B9A15B51DA} = {6F377BED-5FCC-4105-9014-6ED07FA8E92E}
+		{C8F6899F-B077-4622-9C6D-AE12E308C0D6} = {44B3330C-8409-4EB3-A531-AA02349CD458}
+		{29C32360-4B6D-4072-B6A7-A2D71BFB9486} = {44B3330C-8409-4EB3-A531-AA02349CD458}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8360CB34-6154-4199-B569-C98E127828EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -47,5 +53,13 @@ Global
 		{A03378D4-4C43-4291-BE5F-01B9A15B51DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A03378D4-4C43-4291-BE5F-01B9A15B51DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A03378D4-4C43-4291-BE5F-01B9A15B51DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8F6899F-B077-4622-9C6D-AE12E308C0D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8F6899F-B077-4622-9C6D-AE12E308C0D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8F6899F-B077-4622-9C6D-AE12E308C0D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8F6899F-B077-4622-9C6D-AE12E308C0D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29C32360-4B6D-4072-B6A7-A2D71BFB9486}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29C32360-4B6D-4072-B6A7-A2D71BFB9486}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29C32360-4B6D-4072-B6A7-A2D71BFB9486}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29C32360-4B6D-4072-B6A7-A2D71BFB9486}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

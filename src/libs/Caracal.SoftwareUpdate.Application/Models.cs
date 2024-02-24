@@ -1,4 +1,4 @@
-﻿namespace Caracal.Device.Manager;
+﻿namespace Caracal.SoftwareUpdate.Application;
 
 public record UpdateRequest(Guid Id, string Name, List<Chunk> Chunks);
 public record Chunk(string Name, List<Artifact> Artifacts);

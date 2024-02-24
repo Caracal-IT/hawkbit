@@ -1,4 +1,4 @@
-﻿namespace Caracal.Device.Manager.CommandExample;
+﻿namespace Caracal.Messaging.Mqtt;
 
 internal sealed class MqttCommandAction
 {
