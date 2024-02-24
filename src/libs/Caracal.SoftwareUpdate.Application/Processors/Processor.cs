@@ -1,4 +1,6 @@
-﻿namespace Caracal.SoftwareUpdate.Application;
+﻿using Caracal.SoftwareUpdate.Application.Data;
+
+namespace Caracal.SoftwareUpdate.Application.Processors;
 
 public sealed class Processor: IDisposable
 {

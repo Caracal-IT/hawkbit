@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using Caracal.Messaging.Mqtt;
+using Caracal.SoftwareUpdate.Application.Data;
+using Caracal.SoftwareUpdate.Application.Processors;
 using Microsoft.Extensions.Hosting;
 
 namespace Caracal.SoftwareUpdate.Application.Services;

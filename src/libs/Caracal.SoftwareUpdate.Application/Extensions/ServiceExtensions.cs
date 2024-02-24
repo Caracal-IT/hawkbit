@@ -1,4 +1,5 @@
 ﻿using Caracal.Messaging.Mqtt;
+using Caracal.SoftwareUpdate.Application.Factories;
 using Caracal.SoftwareUpdate.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,6 +1,7 @@
 ﻿using Caracal.Messaging.Mqtt;
+using Caracal.SoftwareUpdate.Application.Data;
 
-namespace Caracal.SoftwareUpdate.Application;
+namespace Caracal.SoftwareUpdate.Application.Processors;
 
 public sealed class CommandProcessor: IDisposable
 {

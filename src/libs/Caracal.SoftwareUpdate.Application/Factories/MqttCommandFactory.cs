@@ -1,6 +1,6 @@
 ﻿using Caracal.Messaging.Mqtt;
 
-namespace Caracal.SoftwareUpdate.Application;
+namespace Caracal.SoftwareUpdate.Application.Factories;
 
 public sealed class MqttCommandFactory(string broker) : IMqttCommandFactory
 {

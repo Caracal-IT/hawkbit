@@ -1,7 +1,8 @@
 ﻿using System.Text.Json.Serialization;
+
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace Caracal.SoftwareUpdate.Application;
+namespace Caracal.SoftwareUpdate.Application.Data;
 
 public sealed record UpdateRequest(
     [property: JsonPropertyName("id")] Guid Id, 
