@@ -33,11 +33,11 @@ public sealed class CommandProcessor: IDisposable
         foreach (var chunk in _updateRequest.Chunks)
         foreach (var artifact in chunk.Artifacts)
         {
-            await DownLoadAsync(chunk, artifact).ConfigureAwait(false);
+            await DownloadAsync(chunk, artifact).ConfigureAwait(false);
         }
     }
 
-    private async Task DownLoadAsync(Chunk chunk, Artifact artifact)
+    private async Task DownloadAsync(Chunk chunk, Artifact artifact)
     {
         var msg = $"Requesting {chunk.Name} - {artifact.Name}";
         var cmd = _cmdFactory.Create();
