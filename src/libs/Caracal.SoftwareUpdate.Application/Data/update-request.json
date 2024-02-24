@@ -13,7 +13,8 @@
       "name": "Chunk 2",
       "artifacts": [
         { "name": "Artifact 3" },
-        { "name": "Artifact 4" }
+        { "name": "Artifact 4" },
+        { "name": "Artifact 5" }
       ]
     }
   ]
