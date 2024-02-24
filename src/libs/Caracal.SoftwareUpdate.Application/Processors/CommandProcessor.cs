@@ -43,10 +43,10 @@ public sealed class CommandProcessor: IDisposable
         Console.WriteLine($"Begin - {msg}");
         
         var result = await _mqttClient.ExecuteAsync(
-            "caracal/actions/software-update/req", 
-            msg, 
-            "caracal/actions/software-update/resp", 
-            _cancellationToken).ConfigureAwait(false);
+            topic: "caracal/actions/software-update/req", 
+            message: msg, 
+            responseTopic: "caracal/actions/software-update/resp", 
+            cancellationToken: _cancellationToken).ConfigureAwait(false);
         
         Console.WriteLine($"End - {msg} --> {result}");
     }
