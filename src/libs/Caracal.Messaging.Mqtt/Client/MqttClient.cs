@@ -10,7 +10,6 @@ namespace Caracal.Messaging.Mqtt.Client;
 
 internal sealed class MqttClient: IMqttClient, IDisposable
 {
-    private const int OneHour = 3_600;
     private readonly IManagedMqttClient _mqttClient = new MqttFactory().CreateManagedMqttClient();
     private readonly ConcurrentDictionary<Guid, ISubscription> _subscriptions = [];
 
@@ -25,7 +24,7 @@ internal sealed class MqttClient: IMqttClient, IDisposable
             .WithWillTopic("caracal/status")
             .WithWillPayload("disconnected")
             .WithWillRetain()
-            .WithWillMessageExpiryInterval(OneHour)
+            .WithWillMessageExpiryInterval(IMqttClient.DefaultInterval)
             .WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
             .WithProtocolVersion(MqttProtocolVersion.V500)
             .Build();
@@ -35,30 +34,37 @@ internal sealed class MqttClient: IMqttClient, IDisposable
             .WithClientOptions(options)
             .Build();
         
-        await _mqttClient.StartAsync(managedOptions);
-        await _mqttClient.EnqueueAsync("caracal/status", "connected");
+        await _mqttClient.StartAsync(managedOptions).ConfigureAwait(false);
+        await _mqttClient.EnqueueAsync("caracal/status", "connected").ConfigureAwait(false);
     }
 
     public async Task StopAsync()
     {
         try
         {
-            await _mqttClient.StopAsync();
+            await _mqttClient.StopAsync().ConfigureAwait(false);
         }
         catch(ObjectDisposedException){}
     }
 
-    public async Task EnqueueAsync(string topic, string payload)
-    {
-        var msg = new MqttApplicationMessageBuilder()
-            .WithTopic(topic)
-            .WithPayload(payload)
-            .WithRetainFlag()
-            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
-            .WithMessageExpiryInterval(OneHour)
-            .Build();
+    public Task EnqueueAsync(string topic, string payload, uint messageExpiryIntervalInSeconds = IMqttClient.DefaultInterval) =>
+        EnqueueAsync(topic, payload, string.Empty, messageExpiryIntervalInSeconds);
 
-        await _mqttClient.EnqueueAsync(msg);
+    public async Task EnqueueAsync(string topic, string payload, string responseTopic, uint messageExpiryIntervalInSeconds = IMqttClient.DefaultInterval) {
+        var builder = new MqttApplicationMessageBuilder()
+            .WithTopic(topic)
+            .WithPayload(payload);
+
+        if (!string.IsNullOrWhiteSpace(responseTopic))
+            builder = builder.WithResponseTopic(responseTopic);
+
+        if (messageExpiryIntervalInSeconds > 0)
+            builder = builder
+                .WithRetainFlag()
+                .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+                .WithMessageExpiryInterval(messageExpiryIntervalInSeconds);
+
+        await _mqttClient.EnqueueAsync(builder.Build()).ConfigureAwait(false);
     }
 
     public async Task<ISubscription> SubscribeAsync(string topic)
@@ -66,17 +72,15 @@ internal sealed class MqttClient: IMqttClient, IDisposable
         var subscription = new Subscription( topic, this);
         _subscriptions.TryAdd(subscription.Id, subscription);
         
-        await _mqttClient.SubscribeAsync(topic);
-        await Task.Delay(10);
+        await _mqttClient.SubscribeAsync(topic).ConfigureAwait(false);
+        await Task.Delay(50).ConfigureAwait(false);
         
         return subscription;
     }
 
-    public async Task<string> ExecuteAsync(string topic, string message, string responseTopic, CancellationToken cancellationToken) =>
-        await new MqttCommand(this, topic, message,  responseTopic, cancellationToken)
-            .ExecuteAsync()
-            .ConfigureAwait(false);
-
+    public Task<string> ExecuteAsync(string topic, string message, string responseTopic, CancellationToken cancellationToken) =>
+        new MqttCommand(this, topic, message,  responseTopic, cancellationToken).ExecuteAsync();
+    
     private async Task MqttClientOnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
     {
         if (_subscriptions.IsEmpty)
@@ -102,7 +106,7 @@ internal sealed class MqttClient: IMqttClient, IDisposable
         if (_subscriptions.TryRemove(subscription.Id, out _))
         {
             if(_subscriptions.All(s => s.Value.Topic != subscription.Topic))
-                await _mqttClient.UnsubscribeAsync(subscription.Topic);
+                await _mqttClient.UnsubscribeAsync(subscription.Topic).ConfigureAwait(false);
         }
     }
 

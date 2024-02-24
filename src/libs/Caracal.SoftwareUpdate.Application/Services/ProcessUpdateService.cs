@@ -11,7 +11,7 @@ public sealed class ProcessUpdateService(IMqttClient mqttClient) : BackgroundSer
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await mqttClient.EnqueueAsync("caracal/services/software-update", "started");
+        await mqttClient.EnqueueAsync("caracal/services/software-update", "started").ConfigureAwait(false);
         
         var useCommand = false;
         await Task.Delay(1_000, stoppingToken);
@@ -20,7 +20,7 @@ public sealed class ProcessUpdateService(IMqttClient mqttClient) : BackgroundSer
         {
             useCommand = !useCommand;
             
-            var req = await CreateDemoUpdateRequestAsync(stoppingToken);
+            var req = await CreateDemoUpdateRequestAsync(stoppingToken).ConfigureAwait(false);
             var newReq = req with {
                 Id = Guid.NewGuid(),
                 Name = $"Req {Guid.NewGuid()}"
@@ -30,21 +30,21 @@ public sealed class ProcessUpdateService(IMqttClient mqttClient) : BackgroundSer
             Console.WriteLine($"Start {(useCommand?"With Command":string.Empty)} ...");
             await Task.Delay(1_000, stoppingToken);
             
-            if(useCommand) await CommandProcessor.ProcessAsync(mqttClient, newReq, stoppingToken);
-            else await Processor.ProcessAsync(newReq, stoppingToken);
+            if(useCommand) await CommandProcessor.ProcessAsync(mqttClient, newReq, stoppingToken).ConfigureAwait(false);
+            else await Processor.ProcessAsync(newReq, stoppingToken).ConfigureAwait(false);
             
             Console.WriteLine("Done ....");
             
-            await Task.Delay(10_000, stoppingToken);
+            await Task.Delay(10_000, stoppingToken).ConfigureAwait(false);
         }
     }
     
-    public override async Task StopAsync(CancellationToken cancellationToken) => 
-        await mqttClient.EnqueueAsync("caracal/services/software-update", "stopped");
+    public override Task StopAsync(CancellationToken cancellationToken) => 
+        mqttClient.EnqueueAsync("caracal/services/software-update", "stopped");
 
     private static async Task<UpdateRequest> CreateDemoUpdateRequestAsync(CancellationToken cancellationToken)
     {
         await using var fs = File.OpenRead("Data/update-request.json");
-        return (await JsonSerializer.DeserializeAsync<UpdateRequest>(fs, cancellationToken: cancellationToken))!;
+        return (await JsonSerializer.DeserializeAsync<UpdateRequest>(fs, cancellationToken: cancellationToken).ConfigureAwait(false))!;
     }
 }

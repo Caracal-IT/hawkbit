@@ -13,15 +13,16 @@ internal sealed class MqttCommand
     private ISubscription? _subscription;
     
     private readonly string _topic;
-    private readonly string _message;
+    private readonly string _payload;
     private readonly string _responseTopic;
     private string? _response;
 
-    public MqttCommand(IMqttClient mqttClient, string topic, string message, string responseTopic, CancellationToken cancellationToken)
+    public MqttCommand(IMqttClient mqttClient, string topic, string payload, string responseTopic, CancellationToken cancellationToken)
     {
         _topic = topic;
-        _message = message;
-        _responseTopic = responseTopic;
+        _payload = payload;
+        _responseTopic = $"{responseTopic}@{Guid.NewGuid()}";
+        
         _mqttClient = mqttClient;
         
         _cancellationTokenSource = new CancellationTokenSource(_timeoutTimeSpan);
@@ -33,7 +34,8 @@ internal sealed class MqttCommand
         _subscription = await _mqttClient.SubscribeAsync(_responseTopic).ConfigureAwait(false);
         _subscription.MqttApplicationMessageReceivedEventArgs += SubscriptionOnMqttApplicationMessageReceivedEventArgs;
 
-        await _mqttClient.EnqueueAsync(_topic, _message).ConfigureAwait(false);
+        await _mqttClient.EnqueueAsync(_topic, _payload, _responseTopic, messageExpiryIntervalInSeconds: IMqttClient.DefaultCommandInterval)
+                         .ConfigureAwait(false);
         
         _cancellationToken.WaitHandle.WaitOne(_timeoutTimeSpan);
 
