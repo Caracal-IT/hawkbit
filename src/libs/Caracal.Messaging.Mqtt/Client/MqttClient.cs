@@ -39,7 +39,14 @@ internal sealed class MqttClient: IMqttClient, IDisposable
         await _mqttClient.EnqueueAsync("caracal/status", "connected");
     }
 
-    public async Task StopAsync() => await _mqttClient.StopAsync();
+    public async Task StopAsync()
+    {
+        try
+        {
+            await _mqttClient.StopAsync();
+        }
+        catch(ObjectDisposedException){}
+    }
 
     public async Task EnqueueAsync(string topic, string payload)
     {
