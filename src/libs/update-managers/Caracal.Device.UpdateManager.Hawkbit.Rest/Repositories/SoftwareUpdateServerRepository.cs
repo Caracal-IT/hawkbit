@@ -17,8 +17,8 @@ public sealed class SoftwareUpdateServerRepository(IHttpClientFactory httpClient
     public async IAsyncEnumerable<DomainModels.UpdateRequestsModels.DeploymentRequest> GetDeploymentsAsync(string tenantId, string deviceId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         while (!cancellationToken.IsCancellationRequested)
-        {
-            const string url = "/default/controller/v1/gate1";
+        { 
+            var url = $"/{tenantId}/controller/v1/{deviceId}";
             var controller = await _client.GetFromJsonAsync<RestModels.ControllerModels.Controller>(url, cancellationToken).ConfigureAwait(false);
 
             if(controller != null)
