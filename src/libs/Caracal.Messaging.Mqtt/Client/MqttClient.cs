@@ -7,19 +7,24 @@ using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Formatter;
 using MQTTnet.Protocol;
+using Serilog;
 
 namespace Caracal.Messaging.Mqtt.Client;
 
 internal sealed class MqttClient: IMqttClient, IDisposable
 {
+    private readonly ILogger _logger;
     private readonly MqttSettings _mqttSettings;
+    
     private readonly IManagedMqttClient _mqttClient = new MqttFactory().CreateManagedMqttClient();
     private readonly ConcurrentDictionary<Guid, ISubscription> _subscriptions = [];
 
-    public MqttClient(IOptions<MqttSettings> mqttSettings)
+    public MqttClient(ILogger logger, IOptions<MqttSettings> mqttSettings)
     {
+        _logger = logger;
         _mqttSettings = mqttSettings.Value;
-        _mqttClient.ApplicationMessageReceivedAsync += MqttClientOnApplicationMessageReceivedAsync;
+        
+        AddMqttEvents();
     }
 
     public async Task StartAsync()
@@ -118,7 +123,46 @@ internal sealed class MqttClient: IMqttClient, IDisposable
 
     public void Dispose()
     {
-        _mqttClient.ApplicationMessageReceivedAsync -= MqttClientOnApplicationMessageReceivedAsync;
         _mqttClient.Dispose();
+    }
+    
+    private void AddMqttEvents()
+    {
+        _mqttClient.ApplicationMessageReceivedAsync += MqttClientOnApplicationMessageReceivedAsync;
+        
+        _mqttClient.ConnectedAsync += _ => {
+            _logger.Information("Connected to {Server}:{Port}", _mqttSettings.TcpServer, _mqttSettings.Port);
+            return Task.CompletedTask;
+        };
+        
+        _mqttClient.DisconnectedAsync += _ => {
+            _logger.Warning("Disconnected from {Server}:{Port}", _mqttSettings.TcpServer, _mqttSettings.Port);
+            return Task.CompletedTask;
+        };
+        
+        _mqttClient.ConnectingFailedAsync += e => {
+            _logger.Error(e.Exception, "Connecting to {Server}:{Port} failed", _mqttSettings.TcpServer, _mqttSettings.Port);
+            return Task.CompletedTask;
+        };
+        
+        _mqttClient.ApplicationMessageProcessedAsync += e => {
+            _logger.Information("Message processed {Topic}", e.ApplicationMessage.ApplicationMessage.Topic);
+            return Task.CompletedTask;
+        };
+        
+        _mqttClient.ApplicationMessageSkippedAsync += e => {
+            _logger.Warning("Message skipped {Topic}", e.ApplicationMessage.ApplicationMessage.Topic);
+            return Task.CompletedTask;
+        };
+        
+        _mqttClient.ConnectionStateChangedAsync += e => {
+            _logger.Information("Connection state changed {State}", _mqttClient.IsConnected ? "Connected" : "Disconnected");
+            return Task.CompletedTask;
+        };
+        
+        _mqttClient.ApplicationMessageReceivedAsync += e => {
+            _logger.Information("Message received {Topic}", e.ApplicationMessage.Topic);
+            return Task.CompletedTask;
+        };
     }
 }
