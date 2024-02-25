@@ -1,0 +1,16 @@
+version: '3'
+name: caracal-messages
+
+services:
+  hivemq:
+    image: hivemq/hivemq-ce:latest
+    container_name: hivemq-caracal-messages
+    deploy:
+      resources:
+        limits:
+          memory: 800M
+    mem_reservation: 800M
+    ports:
+      - "1883:1883"
+    environment:
+      JAVA_OPTS: "-XX:+UnlockExperimentalVMOptions -XX:InitialRAMPercentage=30 -XX:MaxRAMPercentage=80 -XX:MinRAMPercentage=30"
