@@ -36,7 +36,7 @@ internal sealed class MqttClient: IMqttClient, IDisposable
             .WithWillPayload("disconnected")
             .WithWillRetain()
             .WithWillMessageExpiryInterval(IMqttClient.DefaultInterval)
-            .WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
+            .WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
             .WithProtocolVersion(MqttProtocolVersion.V500)
             .Build();
         
@@ -64,7 +64,8 @@ internal sealed class MqttClient: IMqttClient, IDisposable
     public async Task EnqueueAsync(string topic, string payload, string responseTopic, uint messageExpiryIntervalInSeconds = IMqttClient.DefaultInterval) {
         var builder = new MqttApplicationMessageBuilder()
             .WithTopic(topic)
-            .WithPayload(payload);
+            .WithPayload(payload)
+            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce);
 
         if (!string.IsNullOrWhiteSpace(responseTopic))
             builder = builder.WithResponseTopic(responseTopic);
@@ -72,7 +73,6 @@ internal sealed class MqttClient: IMqttClient, IDisposable
         if (messageExpiryIntervalInSeconds > 0)
             builder = builder
                 .WithRetainFlag()
-                .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce)
                 .WithMessageExpiryInterval(messageExpiryIntervalInSeconds);
 
         await _mqttClient.EnqueueAsync(builder.Build()).ConfigureAwait(false);
