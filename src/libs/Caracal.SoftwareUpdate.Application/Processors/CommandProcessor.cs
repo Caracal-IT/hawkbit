@@ -42,16 +42,17 @@ public sealed class CommandProcessor: IDisposable
 
     private async Task DownloadAsync(Chunk chunk, Artifact artifact)
     {
-        var msg = $"Requesting {chunk.Name} - {artifact.Name}";
-        _logger.Information("Begin - {Message}", msg);
+        _logger.Information("{Action} : {Chunk} - {Artifact}", "Begin Requesting", chunk.Name, artifact.Name);
         
         var response = await _mqttClient.ExecuteAsync(
             topic: "caracal/actions/software-update/req", 
-            message: msg, 
+            message:  $"Requesting {chunk.Name} - {artifact.Name}", 
             responseTopic: "caracal/actions/software-update/resp", 
             cancellationToken: _cancellationToken).ConfigureAwait(false);
         
-        _logger.Information("End - {Message} --> {Response}", msg, response);
+        _logger.Information("{Action} : {Chunk} - {Artifact} --> {Response}",
+            "End Requesting", chunk.Name, artifact.Name, response);
+
     }
 
     public void Dispose() => _cancellationTokenSource.Dispose();
