@@ -1,13 +1,13 @@
 ﻿using System.Text.Json;
-using Caracal.Messaging.Mqtt;
 using Caracal.Messaging.Mqtt.Client;
 using Caracal.SoftwareUpdate.Application.Data;
 using Caracal.SoftwareUpdate.Application.Processors;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace Caracal.SoftwareUpdate.Application.Services;
 
-public sealed class ProcessUpdateService(IMqttClient mqttClient) : BackgroundService
+public sealed class ProcessUpdateService(IMqttClient mqttClient, ILogger logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -26,14 +26,13 @@ public sealed class ProcessUpdateService(IMqttClient mqttClient) : BackgroundSer
                 Name = $"Req {Guid.NewGuid()}"
             };
             
-            Console.Clear();
-            Console.WriteLine($"Start {(useCommand?"With Command":string.Empty)} ...");
+            logger.Information("Start {Options} ...", useCommand?"With Command":string.Empty);
             await Task.Delay(1_000, stoppingToken);
             
-            if(useCommand) await CommandProcessor.ProcessAsync(mqttClient, newReq, stoppingToken).ConfigureAwait(false);
-            else await Processor.ProcessAsync(newReq, stoppingToken).ConfigureAwait(false);
+            if(useCommand) await CommandProcessor.ProcessAsync(mqttClient, newReq, logger, stoppingToken).ConfigureAwait(false);
+            else await Processor.ProcessAsync(newReq, logger, stoppingToken).ConfigureAwait(false);
             
-            Console.WriteLine("Done ....");
+            logger.Information("Done ....");
             
             await Task.Delay(10_000, stoppingToken).ConfigureAwait(false);
         }

@@ -1,9 +1,11 @@
 ﻿using Caracal.SoftwareUpdate.Application.Data;
+using Serilog;
 
 namespace Caracal.SoftwareUpdate.Application.Processors;
 
 public sealed class Processor: IDisposable
 {
+    private readonly ILogger _logger;
     private readonly UpdateRequest _updateRequest;
     private readonly CancellationToken _cancellationToken;
     private readonly CancellationTokenSource _cancellationTokenSource;
@@ -12,9 +14,10 @@ public sealed class Processor: IDisposable
 
     private readonly Action _queueResponse;
 
-    private Processor(UpdateRequest updateRequest, CancellationToken cancellationToken)
+    private Processor(UpdateRequest updateRequest, ILogger logger, CancellationToken cancellationToken)
     {
         _updateRequest = updateRequest;
+        _logger = logger;
 
         _cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(400));
         _cancellationToken = CancellationTokenSource.CreateLinkedTokenSource([_cancellationTokenSource.Token, _cancellationToken]).Token;
@@ -24,15 +27,15 @@ public sealed class Processor: IDisposable
         _queueResponse = () => Task.Run(OnArtifactReceived, _cancellationToken).ConfigureAwait(false);
     }
 
-    public static async Task ProcessAsync(UpdateRequest request, CancellationToken cancellationToken)
+    public static async Task ProcessAsync(UpdateRequest request, ILogger logger, CancellationToken cancellationToken)
     {
-        using var p = new Processor(request, cancellationToken);
+        using var p = new Processor(request, logger, cancellationToken);
         await p.ProcessAsync().ConfigureAwait(false);
     }
 
     private async Task ProcessAsync()
     {
-        Console.WriteLine($"Processing {_updateRequest.Name}");
+        _logger.Information("Processing {Name}",_updateRequest.Name);
         
         await RequestUpdateAsync().ConfigureAwait(false);
         _cancellationToken.WaitHandle.WaitOne();
@@ -50,10 +53,11 @@ public sealed class Processor: IDisposable
 
         var (chunk, artifact) = _artifacts.Current;
         
-        Console.WriteLine($"Requesting {chunk.Name} - {artifact.Name}");
-        // Mock Callback From Server
+        _logger.Information("Requesting {Chunk} - {Artifact}", chunk.Name, artifact.Name);
+        
+         // Mock Callback From Server
         _queueResponse();
-        Console.WriteLine($"Done Requesting {chunk.Name} - {artifact.Name}");
+        _logger.Information("Done Requesting {Chunk} - {Artifact}", chunk.Name, artifact.Name);
     }
 
     private async Task OnArtifactReceived()
@@ -61,8 +65,7 @@ public sealed class Processor: IDisposable
         await Task.Delay(1000, _cancellationToken).ConfigureAwait(false);
         
         var (chunk, artifact) = _artifacts.Current;
-        
-        Console.WriteLine($"Data received {chunk.Name} - {artifact.Name}");
+        _logger.Information("Data received {Chunk} - {Artifact}", chunk.Name, artifact.Name);
 
         await RequestUpdateAsync();
     }

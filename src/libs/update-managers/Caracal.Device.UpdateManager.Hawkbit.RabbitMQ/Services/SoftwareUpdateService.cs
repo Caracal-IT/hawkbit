@@ -2,19 +2,19 @@
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Serilog;
 
 namespace Caracal.Device.UpdateManager.Hawkbit.RabbitMQ.Services;
 
-public class SoftwareUpdateService: BackgroundService
+public class SoftwareUpdateService(ILogger logger): BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            
             //await AddRabbit();
             Rabbit2();
-            Console.WriteLine("Rabbit MQ");
+            logger.Information("Rabbit MQ");
             await Task.Delay(30000, stoppingToken);
         }
     }
@@ -28,26 +28,25 @@ public class SoftwareUpdateService: BackgroundService
             UserName = "admin",
             Password = "admin"
         }; // Replace with your RabbitMQ server hostname
-        using (var connection = factory.CreateConnection())
-        using (var channel = connection.CreateChannel())
+        using var connection = factory.CreateConnection();
+        using var channel = connection.CreateChannel();
+        
+        // Declare the queue
+        channel.QueueDeclare(queue: "hawkbit_queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+
+        // Set up the consumer
+        var consumer = new EventingBasicConsumer(channel);
+        consumer.Received += (model, ea) =>
         {
-            // Declare the queue
-            channel.QueueDeclare(queue: "hawkbit_queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+            var body = ea.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body);
+            logger.Information("Received message: {0}", message);
+            // Process the message as needed (e.g., trigger software update)
+        };
+        channel.BasicConsume(queue: "hawkbit_queue", autoAck: true, consumer: consumer);
 
-            // Set up the consumer
-            var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += (model, ea) =>
-            {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine("Received message: {0}", message);
-                // Process the message as needed (e.g., trigger software update)
-            };
-            channel.BasicConsume(queue: "hawkbit_queue", autoAck: true, consumer: consumer);
-
-            Console.WriteLine("Waiting for messages...");
-            Console.ReadLine();
-        }
+        logger.Information("Waiting for messages...");
+        Console.ReadLine();
     }
 
     private async Task AddRabbit()
@@ -62,8 +61,8 @@ public class SoftwareUpdateService: BackgroundService
                 Password = "admin"
             };
 
-            using var connection = factory.CreateConnection();
-            using var channel = connection.CreateChannel();
+            using var connection = await factory.CreateConnectionAsync();
+            using var channel = await connection.CreateChannelAsync();
 
             channel.QueueDeclare(queue: "hello",
                 durable: false,
@@ -82,12 +81,14 @@ public class SoftwareUpdateService: BackgroundService
             
             await channel.CloseAsync();
 
-            Console.WriteLine($" [x] Sent {message}");
+            logger.Information($" [x] Sent {message}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.InnerException?.Message);
+            logger.Error(ex, "{Exception}", ex.Message);
+            
+            if(ex.InnerException is not null)
+                logger.Error(ex.InnerException, "{Exception}", ex.InnerException?.Message);
         }
     }
 }

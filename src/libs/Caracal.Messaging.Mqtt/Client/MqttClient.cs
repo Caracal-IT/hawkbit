@@ -1,5 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
+using Caracal.Messaging.Mqtt.Settings;
+using Microsoft.Extensions.Options;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
@@ -10,17 +12,21 @@ namespace Caracal.Messaging.Mqtt.Client;
 
 internal sealed class MqttClient: IMqttClient, IDisposable
 {
+    private readonly MqttSettings _mqttSettings;
     private readonly IManagedMqttClient _mqttClient = new MqttFactory().CreateManagedMqttClient();
     private readonly ConcurrentDictionary<Guid, ISubscription> _subscriptions = [];
 
-    public MqttClient() => 
+    public MqttClient(IOptions<MqttSettings> mqttSettings)
+    {
+        _mqttSettings = mqttSettings.Value;
         _mqttClient.ApplicationMessageReceivedAsync += MqttClientOnApplicationMessageReceivedAsync;
+    }
 
     public async Task StartAsync()
     {
         var options = new MqttClientOptionsBuilder()
-            .WithTcpServer("localhost", 1883) // Replace with your MQTT broker address
-            .WithClientId("Client1")
+            .WithTcpServer(_mqttSettings.TcpServer, _mqttSettings.Port)
+            .WithClientId(_mqttSettings.ClientId)
             .WithWillTopic("caracal/status")
             .WithWillPayload("disconnected")
             .WithWillRetain()

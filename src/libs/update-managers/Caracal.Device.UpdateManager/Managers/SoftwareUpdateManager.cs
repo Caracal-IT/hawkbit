@@ -1,17 +1,19 @@
 ﻿using Caracal.Device.UpdateManager.Models.UpdateRequestsModels;
 using Caracal.Device.UpdateManager.Repositories;
-using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
+// ReSharper disable ClassNeverInstantiated.Global
 
 namespace Caracal.Device.UpdateManager.Managers;
 
-public sealed class SoftwareUpdateManager(ILogger<SoftwareUpdateManager> logger, ISoftwareUpdateServerRepository repository)
+public sealed class SoftwareUpdateManager(ILogger logger, ISoftwareUpdateServerRepository repository)
 {
     public async Task CheckForUpdatesAsync(string tenantId, string deviceId, CancellationToken cancellationToken = default)
     {
         await foreach (var request in repository.GetDeploymentsAsync(tenantId, deviceId, cancellationToken))
         {
-            if(logger.IsEnabled(LogLevel.Information))
-                logger.LogInformation("Checking for updates {RequestId}", request.Id); 
+            if(logger.IsEnabled(LogEventLevel.Information))
+                logger.Information("Checking for updates {RequestId}", request.Id); 
             
             await DownloadChunksAsync(request.Deployment, cancellationToken);
 
