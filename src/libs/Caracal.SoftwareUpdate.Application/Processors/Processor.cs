@@ -17,7 +17,7 @@ public sealed class Processor: IDisposable
     private Processor(UpdateRequest updateRequest, ILogger logger, CancellationToken cancellationToken)
     {
         _updateRequest = updateRequest;
-        _logger = logger;
+        _logger = logger.ForContext<Processor>();
 
         _cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(400));
         _cancellationToken = CancellationTokenSource.CreateLinkedTokenSource([_cancellationTokenSource.Token, _cancellationToken]).Token;

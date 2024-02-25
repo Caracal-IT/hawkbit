@@ -21,7 +21,7 @@ internal sealed class MqttClient: IMqttClient, IDisposable
 
     public MqttClient(ILogger logger, IOptions<MqttSettings> mqttSettings)
     {
-        _logger = logger;
+        _logger = logger.ForContext<MqttClient>();
         _mqttSettings = mqttSettings.Value;
         
         AddMqttEvents();

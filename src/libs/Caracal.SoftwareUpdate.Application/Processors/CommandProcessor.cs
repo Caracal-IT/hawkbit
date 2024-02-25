@@ -17,7 +17,7 @@ public sealed class CommandProcessor: IDisposable
     {
         _mqttClient = mqttClient;
         _updateRequest = updateRequest;
-        _logger = logger;
+        _logger = logger.ForContext<CommandProcessor>();
 
         _cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(400));
         _cancellationToken = CancellationTokenSource.CreateLinkedTokenSource([_cancellationTokenSource.Token, cancellationToken]).Token;
