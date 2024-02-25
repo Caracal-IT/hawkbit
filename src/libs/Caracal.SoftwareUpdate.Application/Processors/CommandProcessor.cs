@@ -6,6 +6,8 @@ namespace Caracal.SoftwareUpdate.Application.Processors;
 
 public sealed class CommandProcessor: IDisposable
 {
+    private readonly TimeSpan _timeout = TimeSpan.FromSeconds(400);
+    
     private readonly UpdateRequest _updateRequest;
     private readonly CancellationToken _cancellationToken;
     private readonly CancellationTokenSource _cancellationTokenSource;
@@ -18,8 +20,8 @@ public sealed class CommandProcessor: IDisposable
         _mqttClient = mqttClient;
         _updateRequest = updateRequest;
         _logger = logger.ForContext<CommandProcessor>();
-
-        _cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(400));
+        
+        _cancellationTokenSource = new CancellationTokenSource(_timeout);
         _cancellationToken = CancellationTokenSource.CreateLinkedTokenSource([_cancellationTokenSource.Token, cancellationToken]).Token;
     }
 
