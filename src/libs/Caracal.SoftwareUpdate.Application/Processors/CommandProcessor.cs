@@ -52,7 +52,6 @@ public sealed class CommandProcessor: IDisposable
         
         _logger.Information("{Action} : {Chunk} - {Artifact} --> {Response}",
             "End Requesting", chunk.Name, artifact.Name, response);
-
     }
 
     public void Dispose() => _cancellationTokenSource.Dispose();
