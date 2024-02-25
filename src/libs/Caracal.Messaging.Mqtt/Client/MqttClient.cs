@@ -155,7 +155,7 @@ internal sealed class MqttClient: IMqttClient, IDisposable
             return Task.CompletedTask;
         };
         
-        _mqttClient.ConnectionStateChangedAsync += e => {
+        _mqttClient.ConnectionStateChangedAsync += _ => {
             _logger.Information("Connection state changed {State}", _mqttClient.IsConnected ? "Connected" : "Disconnected");
             return Task.CompletedTask;
         };
